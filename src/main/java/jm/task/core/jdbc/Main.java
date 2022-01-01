@@ -13,9 +13,7 @@ public class Main {
         userService.saveUser("Leo","Tolstoy", (byte) 99);
         userService.saveUser("Chingachkuk","BigSnake", (byte) 18);
 
-        userService.getAllUsers().forEach(System.out::println);
+//        userService.getAllUsers().forEach(System.out::println);
 
-        userService.cleanUsersTable();
-        userService.dropUsersTable();
     }
 }

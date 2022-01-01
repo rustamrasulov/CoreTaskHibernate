@@ -1,8 +1,16 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class Util {
 
@@ -12,10 +20,45 @@ public class Util {
     private static final String dbSchema = "taskjdbc";
     private static final String user = "TaskJDBC";
     private static final String password = "TaskJDBC";
-    private static final String url = "jdbc:" + dbtype + "://" + dbHost + ":" + dbPort + "/" + dbSchema;
+    private static final String url = "jdbc:" + dbtype + "://" + dbHost + ":" + dbPort + "/" + dbSchema + "?useSSL=false";
 
     private static Connection connection = null;
     private static jm.task.core.jdbc.util.Util instance = null;
+
+    private static SessionFactory sessionFactory;
+
+    public static final SessionFactory getSessionFactory () {
+        if (sessionFactory == null) {
+            try {
+                Configuration configuration = new Configuration();
+                Properties settings = new Properties();
+                settings.put(Environment.DRIVER, "com.mysql.cj.jdbc.Driver");
+                settings.put(Environment.URL, url);
+                settings.put(Environment.USER, user);
+                settings.put(Environment.PASS, password);
+                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
+
+//                settings.put(Environment.SHOW_SQL, "true");
+
+//                settings.put(Environment.HBM2DDL_AUTO, "create-drop");
+
+                configuration.setProperties(settings);
+
+                configuration.addAnnotatedClass(User.class);
+
+                StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                        .applySettings(configuration.getProperties())
+                        .build();
+
+                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        return sessionFactory;
+    }
 
     private Util() {
         try {
