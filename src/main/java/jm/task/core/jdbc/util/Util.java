@@ -23,7 +23,6 @@ public class Util {
     private static final String url = "jdbc:" + dbtype + "://" + dbHost + ":" + dbPort + "/" + dbSchema + "?useSSL=false";
 
     private static Connection connection = null;
-    private static jm.task.core.jdbc.util.Util instance = null;
 
     private static SessionFactory sessionFactory;
 
@@ -37,10 +36,6 @@ public class Util {
                 settings.put(Environment.USER, user);
                 settings.put(Environment.PASS, password);
                 settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
-
-//                settings.put(Environment.SHOW_SQL, "true");
-
-//                settings.put(Environment.HBM2DDL_AUTO, "create-drop");
 
                 configuration.setProperties(settings);
 
@@ -60,27 +55,15 @@ public class Util {
         return sessionFactory;
     }
 
-    private Util() {
+    public static Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(url, user, password);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public static jm.task.core.jdbc.util.Util getInstance() {
-        if (instance == null) {
-            instance = new jm.task.core.jdbc.util.Util();
-        }
-        return instance;
-    }
-
-    public Connection getConnection() {
         return connection;
     }
-
 }
 
