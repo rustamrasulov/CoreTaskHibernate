@@ -14,7 +14,6 @@ import java.util.List;
 public class UserDaoHibernateImpl implements UserDao {
 
     public UserDaoHibernateImpl() {
-
     }
 
     @Override
@@ -43,15 +42,17 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void saveUser(String name, String lastName, byte age) {
         try(Session session = Util.getSessionFactory().openSession()) {
+            User user = new User(name, lastName, age);
             session.beginTransaction();
-            SQLQuery insertQuery =  session.createSQLQuery("INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)");
+            session.persist(user);
+/*          SQLQuery insertQuery =  session.createSQLQuery("INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)");
             insertQuery.setParameter(1, name);
             insertQuery.setParameter(2, lastName);
             insertQuery.setParameter(3, age);
             insertQuery.executeUpdate();
+*/
             session.getTransaction().commit();
         }
-
     }
 
     @Override
@@ -83,6 +84,5 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createSQLQuery("DELETE FROM users").executeUpdate();
             session.getTransaction().commit();
         }
-
     }
 }
